@@ -3,4 +3,9 @@ name = "seelauncherplus"
 version = "1.0.0"
 edition = "2024"
 
+[[bin]]
+name = "seelauncherplus-launcher"
+path = "src/launcher.rs"
+
 [dependencies]
+text_io = "0.1.13"
