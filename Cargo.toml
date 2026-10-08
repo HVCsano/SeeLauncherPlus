@@ -2,10 +2,13 @@
 name = "seelauncherplus"
 version = "1.0.0"
 edition = "2024"
+default-run = "seelauncherplus-launcher"
 
 [[bin]]
 name = "seelauncherplus-launcher"
 path = "src/launcher.rs"
 
 [dependencies]
+dirs = "7.0.0"
+reqwest = { version = "0.13.5", features = ["blocking"] }
 text_io = "0.1.13"
