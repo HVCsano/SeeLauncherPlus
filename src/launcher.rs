@@ -1,19 +1,12 @@
-use std::{
-    env,
-    fs::{self},
-    sync::LazyLock,
-};
+use std::env;
 
-use reqwest::blocking::Client;
+use seelauncherplus_lib::{launch_see_launcher, wait_pause};
 use text_io::read;
 
-use crate::manage::seelauncher::launch_see_launcher;
-
+use crate::manage::shortcut::get_seelauncherplus_loc;
 mod manage;
 
-pub const SEEMTA_BASE_FOLDER: &'static str = "C:\\ProgramData\\SeeMTA";
 pub const SEEMTA_LAUNCHER_URL: &'static str = "http://client.seega.me";
-pub const WEB_CLIENT: LazyLock<Client> = LazyLock::new(reqwest::blocking::Client::new);
 
 fn main() {
     println!("========= SeeLauncher+ =========");
@@ -26,23 +19,6 @@ fn main() {
     println!("SeeMTA Launcher ellenőrzése...\n");
     manage::seelauncher::setup_see_launcher();
 
-    println!("ÁSZF ellenőrzése...\n");
-    let aszf_date = fs::read_to_string(format!("{}\\Terms.see", SEEMTA_BASE_FOLDER));
-    if aszf_date.is_err() {
-        println!("ÁSZF sikertelen lekérdezése, SeeMTA Launcher indítása...\n");
-        launch_see_launcher();
-    }
-    let online_aszf_date = manage::seelauncher::get_online_aszf_date();
-    if online_aszf_date.is_none() {
-        println!("Online ÁSZF sikertelen lekérdezése, SeeMTA Launcher indítása...\n");
-        launch_see_launcher();
-    }
-
-    if aszf_date.unwrap() != online_aszf_date.unwrap() {
-        println!("Kérlek fogadd el az új ÁSZF-et a SeeMTA Launcherben!");
-        launch_see_launcher();
-    }
-
     println!("Előkészítés sikeres, üdv!");
     send_menu();
 }
@@ -51,7 +27,7 @@ fn send_menu() {
     println!("\n======== Választó menü =========\n");
     println!("Kérlek írd be a következő számok valamelyikék a menüpontokhoz!");
     println!(
-        "[1] SeeMTA indítása\n[2] Steam óraszámlálás beállítása\n[3] SeeLauncher+ automatikus játékindítás beállítása\n[4] Asztali vagy Start-menü parancsikon létrehozása a SeeLauncher+ számára\n[5] Alkalmazásból kilépés\nSeeLauncher+ Verzió: v{}\n",
+        "[1] SeeMTA indítása\n[2] SeeMTA Launcher indítása\n[3] SeeMTA telepítési mappa áthelyezése BÁRHOVA\n[4] Steam óraszámlálás beállítása\n[5] SeeLauncher+ automatikus játékindítás beállítása\n[6] Asztali vagy Start-menü parancsikon létrehozása a SeeLauncher+ számára\n[7] Alkalmazásból kilépés\nSeeLauncher+ Verzió: v{}\n",
         env!("CARGO_PKG_VERSION")
     );
 
@@ -62,7 +38,47 @@ fn send_menu() {
             println!("\nSeeMTA indítása...");
             manage::launch_seemta();
         }
+        2 => {
+            println!("\nSeeMTA Launcher indítása...");
+            launch_see_launcher();
+        }
+        3 => {
+            manage::change_folder::change_seemta_folder();
+            send_menu();
+        }
+        4 => {
+            println!("\nSteam óraszámlálás");
+            let launcher_loc = get_seelauncherplus_loc();
+            if launcher_loc.is_none() {
+                println!("Fent a bibi. :(");
+                send_menu();
+            }
+            if launcher_loc.is_some() {
+                println!(
+                    "Ehhez nincs más dolgod, mint amennyiben a GTA:SA Steamről van meg, és letöltve, beírni a Tulajdonságok->Indítási opciók-hoz, hogy:"
+                );
+                println!("'{}' %command%", launcher_loc.unwrap());
+                wait_pause();
+                send_menu();
+            }
+        }
         5 => {
+            println!(
+                "\nAz automata játékindításhoz nincs más dolgod, mint a seelauncherplus.exe fájlt elindítani, a seelauncherplus-launcher.exe helyett!"
+            );
+            wait_pause();
+
+            send_menu();
+        }
+        6 => {
+            println!("\nA parancsikonok létrejönnek bármely gomb lenyomásakor!");
+            wait_pause();
+            manage::shortcut::create_shortcuts();
+            println!("\nA parancsikonok létrehozva!");
+            wait_pause();
+            send_menu();
+        }
+        7 => {
             println!("\nJó volt veled, szia!");
             return;
         }

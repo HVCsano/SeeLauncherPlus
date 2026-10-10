@@ -1,10 +1,6 @@
 use std::fs::{self, create_dir, remove_file};
 
-pub fn get_app_dir() -> String {
-    let base_dir = dirs::data_local_dir().unwrap();
-
-    return format!("{}/seelauncherplus", base_dir.to_str().unwrap());
-}
+use seelauncherplus_lib::get_app_dir;
 
 pub fn setup_app_dir() {
     let pat = get_app_dir();
