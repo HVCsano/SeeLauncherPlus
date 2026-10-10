@@ -75,7 +75,7 @@ fn send_menu() {
                 println!(
                     "Ehhez nincs más dolgod, mint amennyiben a GTA:SA Steamről van meg, és letöltve, beírni a Tulajdonságok->Indítási opciók-hoz, hogy:"
                 );
-                println!("'{}' %command%", launcher_loc.unwrap());
+                println!("\"{}\" %command%", launcher_loc.unwrap());
                 wait_pause();
                 send_menu();
             }
