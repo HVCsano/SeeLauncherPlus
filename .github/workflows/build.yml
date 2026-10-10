@@ -16,8 +16,6 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - uses: taiki-e/create-gh-release-action@v1
-        with:
-          bin: seelauncherplus,seelauncherplus-launcher
 
   upload-assets:
     needs: create-release
@@ -30,5 +28,5 @@ jobs:
         with:
           # (required) Binary names (non-extension portion of filename) to build and upload (whitespace or comma separated list).
           # Note that glob pattern is not supported yet.
-          bin: ...
+          bin: seelauncherplus,seelauncherplus-launcher
           target: x86_64-pc-windows-msvc
