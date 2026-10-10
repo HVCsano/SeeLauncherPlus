@@ -1,6 +1,6 @@
 ![image](https://raw.githubusercontent.com/HVCsano/SeeLauncherPlus/refs/heads/main/assets/logo.png)
 
-# SeeLauncherPlus
+# SeeLauncher+
 SeeMTA Launcher kisegítő alkalmazás.
 
 ## Mit tud?
