@@ -4,13 +4,9 @@ use std::{
 };
 
 use reqwest::{blocking::Client, redirect::Policy};
-use seelauncherplus_lib::{WEB_CLIENT, get_app_dir, get_file_hash, wait_pause};
-use serde::Deserialize;
-
-#[derive(Debug, Deserialize)]
-struct Response(String, Vec<(String, String, String)>);
-
-use crate::SEEMTA_LAUNCHER_URL;
+use seelauncherplus_lib::{
+    SEEMTA_LAUNCHER_URL, SeeResponse, WEB_CLIENT, get_app_dir, get_file_hash, wait_pause,
+};
 
 pub fn setup_see_launcher() {
     let dir = get_app_dir();
@@ -21,7 +17,7 @@ pub fn setup_see_launcher() {
         return;
     }
     let launcher_checksum = WEB_CLIENT
-        .get("https://client.seega.me/new/files.php?folder=launcher")
+        .get(SEEMTA_LAUNCHER_URL.to_string() + "/new/files.php?folder=launcher")
         .send();
     if launcher_checksum.is_err() {
         println!("Launcher checksum lekérése sikertelen, van interneted?");
@@ -29,7 +25,7 @@ pub fn setup_see_launcher() {
         return;
     }
 
-    let checksums: Result<Response, reqwest::Error> = launcher_checksum.unwrap().json();
+    let checksums: Result<SeeResponse, reqwest::Error> = launcher_checksum.unwrap().json();
     if checksums.is_err() {
         println!("Érvénytelen válasz, valami nem stimmel.");
         wait_pause();

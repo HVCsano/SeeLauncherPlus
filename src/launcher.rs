@@ -6,8 +6,6 @@ use text_io::read;
 use crate::manage::shortcut::get_seelauncherplus_loc;
 mod manage;
 
-pub const SEEMTA_LAUNCHER_URL: &'static str = "http://client.seega.me";
-
 fn main() {
     println!("========= SeeLauncher+ =========");
     println!("= Készítette: Csanó (csano.hu) =");

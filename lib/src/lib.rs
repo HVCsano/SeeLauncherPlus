@@ -6,10 +6,15 @@ use std::{
 };
 
 use reqwest::blocking::Client;
+use serde::Deserialize;
 use sha2::{Digest, Sha256};
+
+#[derive(Debug, Deserialize)]
+pub struct SeeResponse(pub String, pub Vec<(String, String, String)>);
 
 pub const WEB_CLIENT: LazyLock<Client> = LazyLock::new(reqwest::blocking::Client::new);
 pub const SEEMTA_BASE_FOLDER: &'static str = "C:\\ProgramData\\SeeMTA";
+pub const SEEMTA_LAUNCHER_URL: &'static str = "https://client.seega.me";
 
 pub fn get_app_dir() -> String {
     let base_dir = dirs::data_local_dir().unwrap();
