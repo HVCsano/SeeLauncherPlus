@@ -12,7 +12,7 @@ SeeMTA Launcher kisegítő alkalmazás.
 - A fájl elindításával azonnal indul a SeeMTA.
 
 ## Használat
-A használat baromi egyszerű, a letöltött zip-fájlból mindkét exe-t ki kell másolni egy mappába, majd első indítás esetén a `seelauncherplus-launcher.exe`-t elindítani.
+A használat baromi egyszerű, a [letöltött zip-fájlból](https://github.com/HVCsano/SeeLauncherPlus/releases/latest) mindkét exe-t ki kell másolni egy mappába, majd első indítás esetén a `seelauncherplus-launcher.exe`-t elindítani.
 Ezt követően ott tudunk különféle tevékenységeket végrehajtani, akár elindítani a játékot, vagy a hivatalos Launchert.
 
 A `seelauncherplus.exe` fájl használatával azonnal indítható a játék, amennyiben a legújabb verzióval rendelkezünk, ez viszont **csak az első launcher indítást követően működik!**
