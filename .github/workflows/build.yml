@@ -1,0 +1,34 @@
+name: SeeLauncher+ Build
+
+permissions:
+  contents: read
+
+on:
+  push:
+    tags:
+      - v[0-9]+.*
+
+jobs:
+  create-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # for taiki-e/create-gh-release-action
+    steps:
+      - uses: actions/checkout@v6
+      - uses: taiki-e/create-gh-release-action@v1
+        with:
+          bin: seelauncherplus,seelauncherplus-launcher
+
+  upload-assets:
+    needs: create-release
+    runs-on: windows-latest
+    permissions:
+      contents: write # for taiki-e/upload-rust-binary-action
+    steps:
+      - uses: actions/checkout@v6
+      - uses: taiki-e/upload-rust-binary-action@v1
+        with:
+          # (required) Binary names (non-extension portion of filename) to build and upload (whitespace or comma separated list).
+          # Note that glob pattern is not supported yet.
+          bin: ...
+          target: x86_64-pc-windows-msvc
