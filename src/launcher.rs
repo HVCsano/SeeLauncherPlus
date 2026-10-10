@@ -15,6 +15,10 @@ fn main() {
     println!("Legújabb verzió: {}", latest);
     println!("Letöltött verzió: v{}", env!("CARGO_PKG_VERSION"));
 
+    if latest != "".to_string() && latest == format!("v{}", env!("CARGO_PKG_VERSION")) {
+        println!("Legújabb verziót használod!")
+    }
+
     if latest == "".to_string() {
         println!(
             "Legújabb verzió lekérése sikertelen, ha ez sokáig fennáll, kérlek ellenőrizd manuálisan!\nLegújabb verzió: https://github.com/HVCsano/SeeLauncherPlus/releases/latest"
