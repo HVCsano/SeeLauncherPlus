@@ -1,6 +1,7 @@
 [package]
 name = "seelauncherplus"
-version = "1.0.0"
+authors = ["HVCsano <me@csano.hu>"]
+version = "1.0.1"
 edition = "2024"
 default-run = "seelauncherplus-launcher"
 
