@@ -17,7 +17,7 @@ Ezt követően ott tudunk különféle tevékenységeket végrehajtani, akár el
 
 A `seelauncherplus.exe` fájl használatával azonnal indítható a játék, amennyiben a legújabb verzióval rendelkezünk, ez viszont **csak az első launcher indítást követően működik!**
 
-## Probléma esetétn
+## Probléma esetén
 Probléma, meglátás esetén akár itt is Issue formájában, vagy az egyszerűbb módon, fórumon is van lehetőség jelezni azokat.
 
 Jó használatot!
