@@ -23,13 +23,9 @@ const LAUNCHER_EXECUTABLE: &str = "seemta.exe";
 fn is_running() -> bool {
     let mut sys = System::new_all();
 
-    // We need to refresh the process list to ensure we have the latest data
     sys.refresh_all();
 
-    // 2. Iterate through all running processes.
-    // processes() returns a reference to a HashMap of processes.
     for (_pid, process) in sys.processes() {
-        // 3. Compare the process name (case-insensitive search is safer).
         if process.name().eq_ignore_ascii_case(GAME_EXECUTABLE) {
             println!("[GAME] ✅ Játék megtaláltva (PID: {}).", process.pid());
             return true;
@@ -48,15 +44,11 @@ fn is_running() -> bool {
 fn check_for_game_or_launcher_running() {
     let mut sys = System::new_all();
 
-    // We need to refresh the process list to ensure we have the latest data
     sys.refresh_all();
 
     let mut running = false;
 
-    // 2. Iterate through all running processes.
-    // processes() returns a reference to a HashMap of processes.
     for (_pid, process) in sys.processes() {
-        // 3. Compare the process name (case-insensitive search is safer).
         if process.name().eq_ignore_ascii_case(GAME_EXECUTABLE) {
             println!("[GAME] ✅ Játék megtaláltva (PID: {}).", process.pid());
             running = true;
