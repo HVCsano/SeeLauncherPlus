@@ -1,4 +1,4 @@
-use std::{fs, io, path::Path};
+use std::{error::Error, fs, io, path::Path};
 
 use rfd::FileDialog;
 use seelauncherplus_lib::{
@@ -6,12 +6,12 @@ use seelauncherplus_lib::{
 };
 use text_io::read;
 
-pub fn change_seemta_folder() {
+pub fn change_seemta_folder() -> Result<(), Box<dyn Error>> {
     let current = get_seemta_install_dir();
     println!("Aktuális mappa: {}\nÁthelyezzük? [igen/nem]", current);
     let res: String = read!();
     if res != "igen".to_string() {
-        return;
+        return Ok(());
     }
     println!("A mappaválasztó megnyílik, kérlek ott válaszd ki a mappát!");
     let folder = FileDialog::new()
@@ -78,19 +78,19 @@ pub fn change_seemta_folder() {
                     "\nMinden sikeresen zajlott! A régi mappából a fájlokat nem töröljük, azt rád bízzuk!\nA biztonság kedvéért elindítjuk a launchert, hogy az minden esetleges hiányt rendbehozzon, a játékot ott elindítani nem kell!"
                 );
                 wait_pause();
-                launch_see_launcher();
-                return;
+                launch_see_launcher()?
             }
 
             if errorhappened {
                 println!(
                     "Valami hiba történt, kérlek nézd vissza hol a baj, amennyiben valami nem stimmel, keress fel fórumon!\nA teljes változtatás nem ment végbe, a régi mappában használható a SeeMTA!"
-                )
+                );
             }
+            Ok(())
         }
         None => {
             println!("Nem került új mappa kiválasztásra.");
-            return;
+            return Ok(());
         }
     }
 }

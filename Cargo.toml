@@ -1,7 +1,7 @@
 [package]
 name = "seelauncherplus"
 authors = ["HVCsano <me@csano.hu>"]
-version = "1.0.2"
+version = "1.0.3"
 edition = "2024"
 default-run = "seelauncherplus-launcher"
 
@@ -19,6 +19,11 @@ mslnk = "0.1.8"
 dirs = "7.0.0"
 rfd = "0.17.2"
 sysinfo = "0.39.6"
+ftail = "0.3.1"
+log = "0.4.34"
+anyhow = "1.0.104"
+win-msgbox = "0.2.2"
+open = "5.4.5"
 
 
 [build-dependencies]

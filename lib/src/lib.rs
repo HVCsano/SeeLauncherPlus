@@ -1,4 +1,5 @@
 use std::{
+    error::Error,
     fs::{self, File},
     io,
     process::Command,
@@ -9,8 +10,10 @@ use reqwest::blocking::Client;
 use serde::Deserialize;
 use sha2::{Digest, Sha256};
 
+pub mod update_check;
+
 #[derive(Debug, Deserialize)]
-pub struct SeeResponse(pub String, pub Vec<(String, String, String)>);
+pub struct SeeResponse(pub String, pub Vec<(String, String, i16)>);
 
 pub const WEB_CLIENT: LazyLock<Client> = LazyLock::new(reqwest::blocking::Client::new);
 pub const SEEMTA_BASE_FOLDER: &'static str = "C:\\ProgramData\\SeeMTA";
@@ -22,12 +25,12 @@ pub fn get_app_dir() -> String {
     return format!("{}/seelauncherplus", base_dir.to_str().unwrap());
 }
 
-pub fn launch_see_launcher() {
+pub fn launch_see_launcher() -> Result<(), Box<dyn Error>> {
     let dir = get_app_dir();
     Command::new("powershell.exe")
         .arg(format!("Start-Process -FilePath '{}/launcher.exe'", dir))
-        .spawn()
-        .unwrap();
+        .spawn()?;
+    Ok(())
 }
 
 pub fn get_online_aszf_date() -> Option<String> {

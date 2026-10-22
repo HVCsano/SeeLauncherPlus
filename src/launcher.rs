@@ -1,52 +1,64 @@
-use std::{env, thread::sleep, time::Duration};
+use std::{env, error::Error, path::Path, thread::sleep, time::Duration};
 
-use seelauncherplus_lib::{launch_see_launcher, wait_pause};
+use ftail::Ftail;
+use log::LevelFilter;
+use seelauncherplus_lib::{
+    get_app_dir, launch_see_launcher,
+    update_check::{get_latest_tag, is_latest},
+    wait_pause,
+};
 use text_io::read;
 
-use crate::{manage::shortcut::get_seelauncherplus_loc, update_check::get_latest_tag};
+use crate::manage::{folders::open_in_explorer, shortcut::get_seelauncherplus_loc};
 mod manage;
-mod update_check;
 
-fn main() {
+fn main() -> Result<(), Box<dyn Error>> {
     println!("========= SeeLauncher+ =========");
     println!("= Készítette: Csanó (csano.hu) =");
     println!("================================\n");
-    let latest = get_latest_tag();
-    println!("Legújabb verzió: {}", latest);
-    println!("Letöltött verzió: v{}", env!("CARGO_PKG_VERSION"));
+    println!("Telepített verzió: v{}", env!("CARGO_PKG_VERSION"));
 
-    if latest != "".to_string() && latest == format!("v{}", env!("CARGO_PKG_VERSION")) {
-        println!("Legújabb verziót használod!")
-    }
+    println!("\n========= Előkészítés ==========\n");
+    manage::folders::setup_app_dir();
+
+    let app_dir = get_app_dir();
+
+    Ftail::new()
+        .daily_file(&Path::new(&format!("{}/logs", app_dir)), LevelFilter::Debug)
+        .init()?;
+
+    let latest = get_latest_tag();
 
     if latest == "".to_string() {
+        log::error!("Failed to get latest version!");
         println!(
             "Legújabb verzió lekérése sikertelen, ha ez sokáig fennáll, kérlek ellenőrizd manuálisan!\nLegújabb verzió: https://github.com/HVCsano/SeeLauncherPlus/releases/latest"
         )
     }
 
-    if (latest != format!("v{}", env!("CARGO_PKG_VERSION"))) && latest != "".to_string() {
+    if !is_latest(&latest) {
+        log::warn!("Not using latest version!");
         println!("\nNem a legújabb verziót használod!");
         println!(
-            "A teljes felhasználói élményért kérlek töltsd le a legújabb verziót innen: https://github.com/HVCsano/SeeLauncherPlus/releases/latest"
+            "A teljes felhasználói élményért kérlek töltsd le a legújabb verziót innen: https://github.com/HVCsano/SeeLauncherPlus/releases/latest.\n"
         )
     }
 
-    println!("\n========= Előkészítés ==========\n");
-    manage::folders::setup_app_dir();
-
+    log::info!("Starting version: {}.", env!("CARGO_PKG_VERSION"));
+    log::info!("Latest version: {}.", latest);
     println!("SeeMTA Launcher ellenőrzése...\n");
-    manage::seelauncher::setup_see_launcher();
+    manage::seelauncher::setup_see_launcher()?;
 
     println!("Előkészítés sikeres, üdv!");
-    send_menu();
+    send_menu()?;
+    Ok(())
 }
 
-fn send_menu() {
+fn send_menu() -> Result<(), Box<dyn Error>> {
     println!("\n======== Választó menü =========\n");
     println!("Kérlek írd be a következő számok valamelyikék a menüpontokhoz!");
     println!(
-        "[1] SeeMTA indítása\n[2] SeeMTA Launcher indítása\n[3] SeeMTA telepítési mappa áthelyezése BÁRHOVA\n[4] Steam óraszámlálás beállítása\n[5] SeeLauncher+ automatikus játékindítás beállítása\n[6] Asztali vagy Start-menü parancsikon létrehozása a SeeLauncher+ számára\n[7] Alkalmazásból kilépés\n",
+        "[1] SeeMTA indítása\n[2] SeeMTA Launcher indítása\n[3] SeeMTA telepítési mappa áthelyezése BÁRHOVA\n[4] Steam óraszámlálás beállítása\n[5] SeeLauncher+ automatikus játékindítás beállítása\n[6] Asztali vagy Start-menü parancsikon létrehozása a SeeLauncher+ számára\n[7] SeeLauncher+ log mappa megnyitása\n[8] Alkalmazásból kilépés\n",
     );
 
     let choice: i8 = read!();
@@ -54,22 +66,22 @@ fn send_menu() {
     match choice {
         1 => {
             println!("\nSeeMTA indítása...");
-            manage::launch_seemta();
+            manage::launch_seemta()
         }
         2 => {
             println!("\nSeeMTA Launcher indítása...");
-            launch_see_launcher();
+            launch_see_launcher()
         }
         3 => {
-            manage::change_folder::change_seemta_folder();
-            send_menu();
+            manage::change_folder::change_seemta_folder()?;
+            send_menu()
         }
         4 => {
             println!("\nSteam óraszámlálás");
             let launcher_loc = get_seelauncherplus_loc();
             if launcher_loc.is_none() {
                 println!("Fent a bibi. :(");
-                send_menu();
+                return send_menu();
             }
             if launcher_loc.is_some() {
                 println!(
@@ -77,8 +89,9 @@ fn send_menu() {
                 );
                 println!("\"{}\" %command%", launcher_loc.unwrap());
                 wait_pause();
-                send_menu();
+                return send_menu();
             }
+            Ok(())
         }
         5 => {
             println!(
@@ -86,7 +99,7 @@ fn send_menu() {
             );
             wait_pause();
 
-            send_menu();
+            send_menu()
         }
         6 => {
             println!("\nA parancsikonok létrejönnek bármely gomb lenyomásakor!");
@@ -94,16 +107,21 @@ fn send_menu() {
             manage::shortcut::create_shortcuts();
             println!("\nA parancsikonok létrehozva!");
             wait_pause();
-            send_menu();
+            send_menu()
         }
         7 => {
+            println!("\nMappa megnyitása...");
+            open_in_explorer(&format!("{}/logs", get_app_dir()))?;
+            send_menu()
+        }
+        8 => {
             println!("\nJó volt veled, szia!");
             sleep(Duration::from_millis(500));
-            return;
+            return Ok(());
         }
         _ => {
             println!("\nÉrvénytelen választás, próbáld újra!");
-            send_menu();
+            send_menu()
         }
     }
 }

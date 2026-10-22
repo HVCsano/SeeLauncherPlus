@@ -1,5 +1,13 @@
-use seelauncherplus_lib::WEB_CLIENT;
 use serde::Deserialize;
+
+use crate::WEB_CLIENT;
+
+pub fn is_latest(latest: &String) -> bool {
+    if latest != "" && latest != &format!("v{}", env!("CARGO_PKG_VERSION")) {
+        return false;
+    }
+    return true;
+}
 
 #[derive(Debug, Deserialize)]
 pub struct GitHubResponse {
