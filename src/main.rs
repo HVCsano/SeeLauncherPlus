@@ -133,12 +133,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         .init()?;
 
     log::info!("Starting version: {}.", env!("CARGO_PKG_VERSION"));
-    runner()?;
-    check_for_game_or_launcher_running();
-    Ok(())
-}
 
-fn check_files(game_loc: &String) -> bool {
     if !is_latest(&get_latest_tag()) {
         let selection = win_msgbox::warning::<YesNo>("Egy új frissítés elérhető a SeeLauncher+-hoz! A legújabb javításokhoz, funkciókhoz érdemes frissíteni. Frissítés most?")
             .title("SeeLauncher+ Frissítés elérhető!")
@@ -151,6 +146,12 @@ fn check_files(game_loc: &String) -> bool {
         }
     }
 
+    runner()?;
+    check_for_game_or_launcher_running();
+    Ok(())
+}
+
+fn check_files(game_loc: &String) -> bool {
     let files_req = WEB_CLIENT
         .get(&format!(
             "{}/new/files.php?folder=client",
