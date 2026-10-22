@@ -27,9 +27,9 @@ const GAME_EXECUTABLE: &str = "gta_sa.exe";
 const LAUNCHER_EXECUTABLE: &str = "seemta.exe";
 
 fn is_running() -> bool {
-    let mut sys = System::new_all();
+    let mut sys = System::new();
 
-    sys.refresh_all();
+    sys.refresh_processes(sysinfo::ProcessesToUpdate::All, true);
 
     for (_pid, process) in sys.processes() {
         if process.name().eq_ignore_ascii_case(GAME_EXECUTABLE) {
@@ -49,31 +49,32 @@ fn is_running() -> bool {
 }
 
 fn check_for_game_or_launcher_running() {
-    let mut sys = System::new_all();
+    let mut sys = System::new();
 
-    sys.refresh_all();
+    loop {
+        sys.refresh_processes(sysinfo::ProcessesToUpdate::All, true);
 
-    let mut running = false;
+        let mut running = false;
 
-    for (_pid, process) in sys.processes() {
-        if process.name().eq_ignore_ascii_case(GAME_EXECUTABLE) {
-            log::info!("[GAME] ✅ Játék megtaláltva (PID: {}).", process.pid());
-            running = true;
+        for (_pid, process) in sys.processes() {
+            if process.name().eq_ignore_ascii_case(GAME_EXECUTABLE) {
+                log::info!("[GAME] ✅ Játék megtaláltva (PID: {}).", process.pid());
+                running = true;
+            }
+            if process.name().eq_ignore_ascii_case(LAUNCHER_EXECUTABLE) {
+                log::info!(
+                    "[LAUNCHER] ✅ Launcher megtaláltva (PID: {}).",
+                    process.pid()
+                );
+                running = true;
+            }
         }
-        if process.name().eq_ignore_ascii_case(LAUNCHER_EXECUTABLE) {
-            log::info!(
-                "[LAUNCHER] ✅ Launcher megtaláltva (PID: {}).",
-                process.pid()
-            );
-            running = true;
-        }
-    }
 
-    if running {
+        if !running {
+            break;
+        }
         sleep(Duration::from_secs(30));
-        check_for_game_or_launcher_running();
     }
-    return;
 }
 
 fn runner() -> Result<(), Box<dyn Error>> {
